@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Chat Interface</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    .chat-container {
+      width: 500px;
+      margin: 0 auto;
+      margin-top: 50px;
+    }
+    
+    .chat-header {
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      padding: 20px 0;
+    }
+    
+    .chat-header h3 {
+      margin: 0;
+    }
+    
+    .chat-history {
+      height: 400px;
+      overflow: auto;
+      background-color: #f5f5f5;
+      padding: 20px;
+    }
+    
+    .chat-history .message-item {
+      margin-bottom: 20px;
+    }
+    
+    .chat-history .message-item span {
+      display: block;
+      margin-bottom: 5px;
+    }
+    
+    .chat-form {
+      background-color: #fff;
+      padding: 20px;
+    }
+    
+    .chat-form textarea {
+      width: 100%;
+      height: 70px;
+      resize: none;
+    }
+    
+    .chat-form input[type="submit"] {
+      background-color: #333;
+      color: #fff;
+      padding: 12px 20px;
+      float: right;
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div class="chat-header">
+      <h3>Chat Interface</h3>
+    </div>
+    <div class="chat-history">
+      <div class="message-item">
+        <span>User: Hello</span>
+        <span>Chatbot: Hi there! How can I help you today?</span>
+      </div>
+    </div>
+    <div class="chat-form">
+      <textarea id="message-input"></textarea>
+      <input type="submit" value="Send" />
+    </div>
+  </div>
+  <script>
+    $('.chat-form input[type="submit"]').click(function(e) {
+      e.preventDefault();
+      
+      var message = $('#message-input').val();
+      
+      $.ajax({
+        type: 'POST',
+        url: 'https://api.openai.com/v1/engines/text-davinci-002/jobs',
+        headers: {
+          'Authorization': 'Bearer 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',
+          'Content-Type': 'application/json'
+        },
+        data: JSON.stringify({ prompt: message }),
+        success: function(response) {
+          var responseText = response.choices[0].text;
+          
+          $('.chat-history').append(
+            '<div class="message-item">' + 
+            '<span>User: ' + message + '</span>' +
+            '<span>Chatbot: ' + responseText + '</span>' +
+            '</div>'
+          );
+        }
+      });
+      
+      $('#message-input').val('');
+    });
+  </script>
+</body>
+</html>
